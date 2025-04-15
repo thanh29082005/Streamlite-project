@@ -34,13 +34,16 @@ st.write("Interact with this dashboard using the widgets on the sidebar")
 st.subheader("Lists of movies filtered by year and Genre")
 st.dataframe(filtered_data[['name', 'genre', 'year']])
 
-# Biểu đồ line - điểm theo thể loại
+# Biểu đồ cột - điểm theo thể loại
 st.subheader("User score of movies and their genre")
 
-score_by_genre = filtered_data.groupby('genre')['score'].mean().sort_index()
+score_by_genre = filtered_data.groupby('genre')['score'].mean().sort_values()
 fig, ax = plt.subplots()
-score_by_genre.plot(kind='line', marker='o', ax=ax)
-ax.set_ylabel("score")
-ax.set_xlabel("genre")
+score_by_genre.plot(kind='bar', color='skyblue', ax=ax)
+ax.set_ylabel("Score")
+ax.set_xlabel("Genre")
+ax.set_title("Average Movie Score by Genre")
+plt.xticks(rotation=45)
 
 st.pyplot(fig)
+
