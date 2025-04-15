@@ -1,22 +1,46 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-#read in the file
-movies_data = pd.read_csv("https://raw.githubusercontent.com/nv-thang/Data-Visualization-Course/main/Dataset%20for%20Practice/movies.csv")
 
-movies_data.dropna()
+# Đọc dữ liệu
+movies_data = pd.read_csv(
+    "https://raw.githubusercontent.com/nv-thang/Data-Visualization-Course/main/Dataset%20for%20Practice/movies.csv"
+)
+movies_data.dropna(inplace=True)
 
-st.write("""Average Movie Budget, Grouped by Genre""")
-avg_budget = movies_data.groupby('genre')['budget'].mean().round()
-avg_budget = avg_budget.reset_index()
-genre = avg_budget['genre']
-avg_bud = avg_budget['budget']
+# Sidebar - Widgets
+st.sidebar.header("Select a range on the slider (it represents movie score)")
+score_range = st.sidebar.slider("Choose a value:", min_value=1.0, max_value=10.0, value=(1.0, 10.0), step=0.1)
 
-fig = plt.figure(figsize = (19, 10))
-plt.bar(genre, avg_bud, color = 'maroon')
-plt.xlabel('genre')
-plt.ylabel('budget')
-plt.title('Matplotlib Bar Chart Showing the Average \
-Budget of Movies in Each Genre')
+genre_options = movies_data['genre'].unique().tolist()
+selected_genres = st.sidebar.multiselect("Choose Genre:", genre_options, default=genre_options[:4])
+
+years = sorted(movies_data['year'].dropna().unique())
+selected_year = st.sidebar.selectbox("Choose a Year", years)
+
+# Lọc dữ liệu
+filtered_data = movies_data[
+    (movies_data['score'] >= score_range[0]) &
+    (movies_data['score'] <= score_range[1]) &
+    (movies_data['genre'].isin(selected_genres)) &
+    (movies_data['year'] == selected_year)
+]
+
+# Giao diện chính
+st.title("Interactive Dashboard")
+st.write("Interact with this dashboard using the widgets on the sidebar")
+
+# Hiển thị bảng dữ liệu
+st.subheader("Lists of movies filtered by year and Genre")
+st.dataframe(filtered_data[['name', 'genre', 'year']])
+
+# Biểu đồ line - điểm theo thể loại
+st.subheader("User score of movies and their genre")
+
+score_by_genre = filtered_data.groupby('genre')['score'].mean().sort_index()
+fig, ax = plt.subplots()
+score_by_genre.plot(kind='line', marker='o', ax=ax)
+ax.set_ylabel("score")
+ax.set_xlabel("genre")
 
 st.pyplot(fig)
