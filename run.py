@@ -4,7 +4,8 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import warnings
+warnings.filterwarnings('ignore')
 # Đọc dữ liệu
 movies_data = pd.read_csv(
     "https://raw.githubusercontent.com/nv-thang/Data-Visualization-Course/main/Dataset%20for%20Practice/movies.csv"
