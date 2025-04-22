@@ -1,3 +1,6 @@
+#Thiều Minh Thành - 2321050015
+#Đào Duy Đức - 2321050088
+#Nguyễn Trung Đức - 2321050091
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -38,12 +41,13 @@ st.dataframe(filtered_data[['name', 'genre', 'year']])
 st.subheader("User score of movies and their genre")
 
 score_by_genre = filtered_data.groupby('genre')['score'].mean().sort_values()
-fig, ax = plt.subplots()
-score_by_genre.plot(kind='bar', color='skyblue', ax=ax)
-ax.set_ylabel("Score")
-ax.set_xlabel("Genre")
-ax.set_title("Average Movie Score by Genre")
-plt.xticks(rotation=45)
+# Tạo biểu đồ cột
+plt.figure(figsize=(8,5))
+plt.bar(score_by_genre.index, score_by_genre.values, color='skyblue')
+# Thêm nhãn và tiêu đề
+plt.xlabel('Thể loại phim')
+plt.ylabel('Điểm trung bình')
+plt.title('Biểu đồ điểm trung bình theo thể loại')
+plt.xticks(rotation=30)
 
-st.pyplot(fig)
-
+st.pyplot()
